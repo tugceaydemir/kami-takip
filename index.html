@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
 <title>Kami Growth Takip</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#FAF8F5;--surface:#FFFFFF;--surface2:#F4F1EC;--ink:#1E2422;--muted:#7A827E;
@@ -19,10 +20,12 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
 .wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
-header{padding:30px 0 8px}
-h1{font-size:26px;margin:0 0 2px}
-.sub{color:var(--muted);font-size:13.5px;margin:0}
-.focus{margin:18px 0 8px}
+header{padding:26px 0 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-size:24px;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.who{text-align:right;font-size:12px;color:var(--muted);white-space:nowrap}
+.who button{display:block;margin-top:4px;margin-left:auto}
+.focus{margin:16px 0 8px}
 .focus label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px}
 .focus input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:16px;padding:12px 14px}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
@@ -46,6 +49,7 @@ h2 .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:upper
 :root[data-theme="dark"] .btn{color:#0E1513}@media(prefers-color-scheme:dark){.btn{color:#0E1513}}:root[data-theme="light"] .btn{color:#fff}
 .btn.ghost{background:transparent;color:var(--accent-ink);border:1px solid var(--accent)}
 .btn.sm{padding:5px 10px;font-size:12.5px}
+.btn.link{background:none;border:none;color:var(--muted);text-decoration:underline;padding:2px;font-size:12px;cursor:pointer}
 .exp{padding:12px 14px;border-bottom:1px solid var(--line)}
 .exp:last-child{border-bottom:none}
 .exp .top{display:flex;align-items:center;gap:8px;justify-content:space-between}
@@ -66,16 +70,40 @@ td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;font-fam
 td:first-child{text-align:left;font-family:var(--sans)}
 tr:last-child td{border-bottom:none}
 .del2{border:none;background:none;color:var(--bad);cursor:pointer}
-.tools{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
 .small{color:var(--muted);font-size:12.5px}
 .empty{color:var(--muted);font-size:14px;font-style:italic;padding:14px;text-align:center}
+.sync{font-size:12px;color:var(--muted)}
+#gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:50;padding:20px}
+#gate .box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;max-width:380px;width:100%;text-align:center}
+#gate h2{display:block;font-size:22px;margin:0 0 4px}
+#gate p{color:var(--muted);font-size:14px;margin:0 0 18px}
+#gate input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:16px;padding:12px 14px;margin-bottom:10px}
+#gate .btn{width:100%;padding:12px}
+#gate .msg{margin-top:14px;font-size:13.5px;min-height:18px}
+#gate .msg.ok{color:var(--good)}#gate .msg.err{color:var(--bad)}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<div id="gate">
+  <div class="box">
+    <div style="font-size:40px">✅</div>
+    <h2>Kami Growth Takip</h2>
+    <p>Giriş yap — verilerin sunucuda, her cihazda aynı.</p>
+    <input type="email" id="email" placeholder="e-posta adresin" autocomplete="email">
+    <button class="btn" id="send">Giriş linki gönder</button>
+    <div class="msg" id="gmsg"></div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="app">
 <header>
-  <h1>✅ Kami Growth Takip</h1>
-  <p class="sub">Sade sistem: yaptıkça işaretle. Detay/dokümanlar Growth OS'ta; burası günlük ekranın.</p>
+  <div>
+    <h1>✅ Kami Growth Takip</h1>
+    <p class="sub">Yaptıkça işaretle. <span class="sync" id="sync"></span></p>
+  </div>
+  <div class="who"><span id="uemail"></span><button class="btn link" id="logout">çıkış</button></div>
 </header>
 
 <div class="focus">
@@ -91,7 +119,7 @@ tr:last-child td{border-bottom:none}
 <div id="lists"></div>
 
 <h2>🧪 Deneyler <span class="tag">test</span></h2>
-<div class="card" id="exp-card">
+<div class="card">
   <div id="exp-list"></div>
   <div class="add">
     <input type="text" id="exp-name" placeholder="Deney (ör. ücretsiz bölüm 10→12)">
@@ -115,163 +143,155 @@ tr:last-child td{border-bottom:none}
   <table id="w-table" style="display:none"><thead><tr><th>Hafta</th><th>Harcama</th><th>Install</th><th>Gelir</th><th>Abone</th><th>D7</th><th></th></tr></thead><tbody id="w-body"></tbody></table>
 </div>
 
-<div class="tools">
-  <button class="btn ghost sm" id="backup">Yedek indir (JSON)</button>
-  <button class="btn ghost sm" id="restore">Yedekten yükle</button>
-  <input type="file" id="file" accept=".json" style="display:none">
-  <span class="small" id="saved" style="align-self:center"></span>
-</div>
-<p class="small" style="margin-top:14px">Veriler bu tarayıcıda saklanır. Ara sıra yedek indir. Growth OS (detaylı): <a href="index.html" style="color:var(--accent-ink)">index</a></p>
+<p class="small" style="margin-top:18px">Veriler Supabase'de, hesabına bağlı. Growth OS (detaylı): <a href="https://tugceaydemir.github.io/growth-os/" style="color:var(--accent-ink)">aç</a></p>
 </div>
 
 <script>
 (function(){
 "use strict";
-var KEY="kami-growth-takip-v1";
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
-function uid(){return (db._n=(db._n||0)+1)+"_"+Date.now()}
-function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
-var db=load();
+var SUPA_URL="https://epqtdonorpyfqtqzzyos.supabase.co";
+var SUPA_KEY="sb_publishable_LcIaK40Sh5SRMEw8S7HrlA_fgC7hpqD";
+var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+var db=null, uid=null, saveTimer=null;
 
-var SEED=[
- {id:"g-temel",title:"Temel — önce bunlar",note:"ölçüm zemini",items:[
-   "Branch attribution'ı doğrula (Abdul ile test satın alma)",
-   "Event'leri kur: chapter_read, paywall_view, token_spend, ai_chat (Abdul)",
-   "Tek doğruluk kaynağı: gelir = Adapty (GA4'ü gelir için kullanma)",
-   "Baseline sayılarını çıkar (funnel + gelir)"]},
- {id:"g-urun",title:"Ürün deneyleri — dönüşüm",note:"senin kontrolünde",items:[
-   "Ücretsiz bölüm testi 10→12, D1→D2'ye bak",
-   "Kapak A/B: 1 hikaye, 2 kapak",
-   "Ana sayfa: 'Kaldığın yerden devam et'i öne çıkar",
-   "AI chat açılış prompt testi (daha uzun sohbet)"]},
- {id:"g-rutin",title:"Rutin — alışkanlık",note:"düzenli",items:[
-   "Günlük 15 dk nabız: harcama / install / gelir / anomali",
-   "Pazartesi: haftalık rapor + kokpit doldur",
-   "Haftalık trend raporu (TikTok Creative Center)"]},
- {id:"g-benim",title:"Kendi görevlerim",note:"",items:[]}
-];
-if(!db.groups){
-  db.groups=SEED.map(function(g){return {id:g.id,title:g.title,note:g.note,
-    items:g.items.map(function(t){return {id:uid(),t:t,done:false}})};});
-  save();
+function seed(){
+  var S=[
+   {id:"g-temel",title:"Temel — önce bunlar",note:"ölçüm zemini",items:[
+     "Branch attribution'ı doğrula (Abdul ile test satın alma)",
+     "Event'leri kur: chapter_read, paywall_view, token_spend, ai_chat (Abdul)",
+     "Tek doğruluk kaynağı: gelir = Adapty (GA4'ü gelir için kullanma)",
+     "Baseline sayılarını çıkar (funnel + gelir)"]},
+   {id:"g-urun",title:"Ürün deneyleri — dönüşüm",note:"senin kontrolünde",items:[
+     "Ücretsiz bölüm testi 10→12, D1→D2'ye bak",
+     "Kapak A/B: 1 hikaye, 2 kapak",
+     "Ana sayfa: 'Kaldığın yerden devam et'i öne çıkar",
+     "AI chat açılış prompt testi (daha uzun sohbet)"]},
+   {id:"g-rutin",title:"Rutin — alışkanlık",note:"düzenli",items:[
+     "Günlük 15 dk nabız: harcama / install / gelir / anomali",
+     "Pazartesi: haftalık rapor + kokpit doldur",
+     "Haftalık trend raporu (TikTok Creative Center)"]},
+   {id:"g-benim",title:"Kendi görevlerim",note:"",items:[]}
+  ];
+  var n=0;
+  return {groups:S.map(function(g){return {id:g.id,title:g.title,note:g.note,items:g.items.map(function(t){return {id:(++n)+"_s",t:t,done:false}})}}),exps:[],weeks:[],focus:"",_n:n};
 }
-db.exps=db.exps||[]; db.weeks=db.weeks||[];
+function uid_(){return (db._n=(db._n||0)+1)+"_"+Date.now()}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
 
-// focus
-var f=document.getElementById("focus");
-f.value=db.focus||"";
-f.addEventListener("input",function(){db.focus=f.value;save()});
+var gate=document.getElementById("gate"),app=document.getElementById("app");
+function showApp(email){gate.classList.add("hidden");app.classList.remove("hidden");document.getElementById("uemail").textContent=email;}
+function showGate(){app.classList.add("hidden");gate.classList.remove("hidden");}
+document.getElementById("send").addEventListener("click",sendLink);
+document.getElementById("email").addEventListener("keydown",function(e){if(e.key==="Enter")sendLink()});
+function sendLink(){
+  var email=document.getElementById("email").value.trim();
+  var m=document.getElementById("gmsg");
+  if(!email||email.indexOf("@")<0){m.className="msg err";m.textContent="Geçerli bir e-posta gir.";return}
+  m.className="msg";m.textContent="Gönderiliyor…";
+  sb.auth.signInWithOtp({email:email,options:{emailRedirectTo:location.href.split("#")[0]}}).then(function(r){
+    if(r.error){m.className="msg err";m.textContent="Hata: "+r.error.message;}
+    else{m.className="msg ok";m.textContent="📧 Mailine giriş linki gönderildi. Linke tıkla, otomatik giriş yapılacak. (Spam'e de bak.)";}
+  });
+}
+document.getElementById("logout").addEventListener("click",function(){sb.auth.signOut().then(function(){location.reload()})});
 
-// ---- lists
+sb.auth.getSession().then(function(r){
+  var s=r.data.session;
+  if(s){onAuthed(s.user);}else{showGate();}
+});
+sb.auth.onAuthStateChange(function(ev,session){
+  if(ev==="SIGNED_IN"&&session&&!uid){onAuthed(session.user);}
+  if(ev==="SIGNED_OUT"){showGate();}
+});
+function onAuthed(user){uid=user.id;showApp(user.email);loadData();}
+
+function setSync(t){document.getElementById("sync").textContent=t;}
+function loadData(){
+  setSync("yükleniyor…");
+  sb.from("tracker").select("data").eq("user_id",uid).maybeSingle().then(function(r){
+    if(r.error){setSync("okuma hatası: "+r.error.message);return}
+    if(r.data&&r.data.data){db=r.data.data;}
+    else{var old=null;try{old=JSON.parse(localStorage.getItem("kami-growth-takip-v1"))}catch(e){}db=old||seed();saveNow();}
+    normalize(); mount();
+  });
+}
+function normalize(){db.groups=db.groups||seed().groups;db.exps=db.exps||[];db.weeks=db.weeks||[];db.focus=db.focus||"";}
+function saveNow(){
+  if(!uid||!db)return; setSync("kaydediliyor…");
+  sb.from("tracker").upsert({user_id:uid,data:db,updated_at:new Date().toISOString()}).then(function(r){
+    setSync(r.error?("kayıt hatası: "+r.error.message):"kaydedildi ✓");
+  });
+}
+function save(){if(saveTimer)clearTimeout(saveTimer);setSync("…");saveTimer=setTimeout(saveNow,700);}
+
+function mount(){
+  var f=document.getElementById("focus"); f.value=db.focus||"";
+  f.oninput=function(){db.focus=f.value;save()};
+  document.getElementById("exp-add").onclick=addExp;
+  document.getElementById("exp-name").onkeydown=function(e){if(e.key==="Enter")addExp()};
+  document.getElementById("exp-list").onclick=expClick;
+  document.getElementById("w-save").onclick=saveWeek;
+  document.getElementById("w-body").onclick=function(e){var b=e.target.closest("[data-w]");if(!b)return;db.weeks.splice(+b.dataset.w,1);save();renderWeeks();};
+  renderLists(); renderExps(); renderWeeks();
+}
 function progress(){
-  var all=0,done=0;
-  db.groups.forEach(function(g){g.items.forEach(function(it){all++;if(it.done)done++})});
+  var all=0,done=0; db.groups.forEach(function(g){g.items.forEach(function(it){all++;if(it.done)done++})});
   var pct=all?Math.round(100*done/all):0;
   document.getElementById("progtxt").textContent=done+" / "+all+" tamamlandı";
-  var r=document.getElementById("ring"); r.style.setProperty("--v",pct);
+  document.getElementById("ring").style.setProperty("--v",pct);
   document.getElementById("ringtxt").textContent=pct+"%";
 }
 function renderLists(){
   var host=document.getElementById("lists"); host.innerHTML="";
   db.groups.forEach(function(g){
-    var h=document.createElement("h2");
-    h.innerHTML=esc(g.title)+(g.note?' <span class="tag">'+esc(g.note)+'</span>':"");
-    host.appendChild(h);
+    var h=document.createElement("h2"); h.innerHTML=esc(g.title)+(g.note?' <span class="tag">'+esc(g.note)+'</span>':""); host.appendChild(h);
     var card=document.createElement("div"); card.className="card";
-    if(!g.items.length){card.innerHTML='<div class="empty">Boş — aşağıdan ekle.</div>';}
+    if(!g.items.length)card.innerHTML='<div class="empty">Boş — aşağıdan ekle.</div>';
     g.items.forEach(function(it){
       var d=document.createElement("div"); d.className="item"+(it.done?" done":"");
       var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=it.done;
-      cb.addEventListener("change",function(){it.done=cb.checked;save();d.classList.toggle("done",cb.checked);progress()});
+      cb.onchange=function(){it.done=cb.checked;d.classList.toggle("done",cb.checked);progress();save()};
       var sp=document.createElement("div"); sp.className="t"; sp.textContent=it.t;
-      var del=document.createElement("button"); del.className="del"; del.innerHTML="&times;"; del.title="Sil";
-      del.addEventListener("click",function(){if(confirm("Silinsin mi?")){g.items=g.items.filter(function(x){return x!==it});save();renderLists();progress()}});
-      d.appendChild(cb); d.appendChild(sp); d.appendChild(del);
-      card.appendChild(d);
+      var del=document.createElement("button"); del.className="del"; del.innerHTML="&times;";
+      del.onclick=function(){if(confirm("Silinsin mi?")){g.items=g.items.filter(function(x){return x!==it});renderLists();progress();save()}};
+      d.appendChild(cb);d.appendChild(sp);d.appendChild(del); card.appendChild(d);
     });
     var add=document.createElement("div"); add.className="add";
     var inp=document.createElement("input"); inp.type="text"; inp.placeholder="Yeni madde ekle…";
     var btn=document.createElement("button"); btn.className="btn sm"; btn.textContent="Ekle";
-    function addItem(){var v=inp.value.trim();if(!v)return;g.items.push({id:uid(),t:v,done:false});inp.value="";save();renderLists();progress()}
-    btn.addEventListener("click",addItem);
-    inp.addEventListener("keydown",function(e){if(e.key==="Enter")addItem()});
-    add.appendChild(inp); add.appendChild(btn);
-    card.appendChild(add);
-    host.appendChild(card);
+    function ai(){var v=inp.value.trim();if(!v)return;g.items.push({id:uid_(),t:v,done:false});inp.value="";renderLists();progress();save()}
+    btn.onclick=ai; inp.onkeydown=function(e){if(e.key==="Enter")ai()};
+    add.appendChild(inp);add.appendChild(btn); card.appendChild(add); host.appendChild(card);
   });
   progress();
 }
-
-// ---- experiments
 var EXST={run:["Deniyorum","run"],win:["Kazandı","win"],loss:["Kaybetti","loss"]};
 function renderExps(){
   var el=document.getElementById("exp-list"); el.innerHTML="";
   if(!db.exps.length){el.innerHTML='<div class="empty">Henüz deney yok.</div>';return}
-  db.exps.forEach(function(x,i){
-    var s=EXST[x.st]||EXST.run;
-    var d=document.createElement("div"); d.className="exp";
-    d.innerHTML='<div class="top"><span class="nm">'+esc(x.nm)+'</span>'+
-      '<span><button class="pill '+s[1]+'" data-cy="'+i+'">'+s[0]+'</button> '+
-      '<button class="del2" data-del="'+i+'">&times;</button></span></div>'+
-      (x.nt?'<div class="nt">'+esc(x.nt)+'</div>':'');
-    el.appendChild(d);
-  });
+  db.exps.forEach(function(x,i){var s=EXST[x.st]||EXST.run;var d=document.createElement("div");d.className="exp";
+    d.innerHTML='<div class="top"><span class="nm">'+esc(x.nm)+'</span><span><button class="pill '+s[1]+'" data-cy="'+i+'">'+s[0]+'</button> <button class="del2" data-del="'+i+'">&times;</button></span></div>'+(x.nt?'<div class="nt">'+esc(x.nt)+'</div>':'');
+    el.appendChild(d);});
 }
-document.getElementById("exp-add").addEventListener("click",function(){
-  var nm=document.getElementById("exp-name").value.trim(); if(!nm)return;
-  db.exps.unshift({nm:nm,st:"run",nt:""}); document.getElementById("exp-name").value=""; save(); renderExps();
-});
-document.getElementById("exp-name").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("exp-add").click()});
-document.getElementById("exp-list").addEventListener("click",function(e){
-  var cy=e.target.closest("[data-cy]"), del=e.target.closest("[data-del]");
-  if(del){if(confirm("Deney silinsin mi?")){db.exps.splice(+del.dataset.del,1);save();renderExps()}return}
-  if(cy){var o=["run","win","loss"];var x=db.exps[+cy.dataset.cy];x.st=o[(o.indexOf(x.st)+1)%o.length];save();renderExps()}
-});
-
-// ---- weeks
+function addExp(){var nm=document.getElementById("exp-name").value.trim();if(!nm)return;db.exps.unshift({nm:nm,st:"run",nt:""});document.getElementById("exp-name").value="";renderExps();save();}
+function expClick(e){var cy=e.target.closest("[data-cy]"),del=e.target.closest("[data-del]");
+  if(del){if(confirm("Deney silinsin mi?")){db.exps.splice(+del.dataset.del,1);renderExps();save()}return}
+  if(cy){var o=["run","win","loss"];var x=db.exps[+cy.dataset.cy];x.st=o[(o.indexOf(x.st)+1)%o.length];renderExps();save()}}
 function money(n){return isFinite(n)?n.toLocaleString("tr-TR")+" ₺":"—"}
 function renderWeeks(){
   var b=document.getElementById("w-body"),tb=document.getElementById("w-table"); b.innerHTML="";
-  if(!db.weeks.length){tb.style.display="none";return}
-  tb.style.display="";
-  db.weeks.forEach(function(w,i){
-    var tr=document.createElement("tr");
-    tr.innerHTML="<td>"+esc(w.date)+"</td><td>"+money(w.spend)+"</td><td>"+(w.inst||0)+"</td><td>"+money(w.rev)+"</td><td>"+(w.sub||0)+"</td><td>"+(w.d7||0)+"%</td>"+
-      '<td><button class="del2" data-w="'+i+'">&times;</button></td>';
-    b.appendChild(tr);
-  });
+  if(!db.weeks.length){tb.style.display="none";return} tb.style.display="";
+  db.weeks.forEach(function(w,i){var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+esc(w.date)+"</td><td>"+money(w.spend)+"</td><td>"+(w.inst||0)+"</td><td>"+money(w.rev)+"</td><td>"+(w.sub||0)+"</td><td>"+(w.d7||0)+"%</td><td><button class='del2' data-w='"+i+"'>&times;</button></td>";
+    b.appendChild(tr);});
 }
-document.getElementById("w-save").addEventListener("click",function(){
+function saveWeek(){
   var d=document.getElementById("w-date").value; if(!d){alert("Tarih seç");return}
-  var o={date:d,spend:+document.getElementById("w-spend").value||0,inst:+document.getElementById("w-inst").value||0,
-    rev:+document.getElementById("w-rev").value||0,sub:+document.getElementById("w-sub").value||0,d7:+document.getElementById("w-d7").value||0};
+  var o={date:d,spend:+document.getElementById("w-spend").value||0,inst:+document.getElementById("w-inst").value||0,rev:+document.getElementById("w-rev").value||0,sub:+document.getElementById("w-sub").value||0,d7:+document.getElementById("w-d7").value||0};
   var i=db.weeks.findIndex(function(x){return x.date===d}); if(i>=0)db.weeks[i]=o; else db.weeks.push(o);
-  db.weeks.sort(function(a,b){return a.date<b.date?1:-1}); save(); renderWeeks();
+  db.weeks.sort(function(a,b){return a.date<b.date?1:-1}); renderWeeks(); save();
   ["w-spend","w-inst","w-rev","w-sub","w-d7"].forEach(function(id){document.getElementById(id).value=""});
-  flash("Kaydedildi ✓");
-});
-document.getElementById("w-body").addEventListener("click",function(e){
-  var b=e.target.closest("[data-w]"); if(!b)return;
-  db.weeks.splice(+b.dataset.w,1); save(); renderWeeks();
-});
-
-// ---- backup
-function flash(m){var s=document.getElementById("saved");s.textContent=m;setTimeout(function(){s.textContent=""},1800)}
-document.getElementById("backup").addEventListener("click",function(){
-  var blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download="kami-growth-takip-"+new Date().toISOString().slice(0,10)+".json";
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);flash("İndirildi ✓");
-});
-document.getElementById("restore").addEventListener("click",function(){document.getElementById("file").click()});
-document.getElementById("file").addEventListener("change",function(e){
-  var fl=e.target.files[0]; if(!fl)return; var r=new FileReader();
-  r.onload=function(){try{var d=JSON.parse(r.result);if(!confirm("Mevcut veriler değişecek. Devam?"))return;db=d;save();location.reload()}catch(err){alert("Geçersiz yedek")}};
-  r.readAsText(fl);
-});
-
-renderLists(); renderExps(); renderWeeks();
+}
 })();
 </script>
 </body>
