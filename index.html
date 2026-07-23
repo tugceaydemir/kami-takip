@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
+<title>Kami Growth Takip</title>
+<style>
+:root{
+  --bg:#FAF8F5;--surface:#FFFFFF;--surface2:#F4F1EC;--ink:#1E2422;--muted:#7A827E;
+  --line:#E6E2DB;--accent:#12907E;--accent-soft:#E0F0ED;--accent-ink:#0C6355;
+  --good:#2E9E5B;--bad:#C0392B;--warn:#B57A1E;
+  --sans:'Segoe UI',system-ui,-apple-system,sans-serif;--mono:Consolas,ui-monospace,monospace;
+}
+@media(prefers-color-scheme:dark){:root{--bg:#121716;--surface:#1A211F;--surface2:#212927;--ink:#E8EDEB;--muted:#93A09B;--line:#2C3634;--accent:#2CC5AE;--accent-soft:#173430;--accent-ink:#7ADECE;--good:#4CC27E;--bad:#E4706B;--warn:#D9A650;}}
+:root[data-theme="dark"]{--bg:#121716;--surface:#1A211F;--surface2:#212927;--ink:#E8EDEB;--muted:#93A09B;--line:#2C3634;--accent:#2CC5AE;--accent-soft:#173430;--accent-ink:#7ADECE;--good:#4CC27E;--bad:#E4706B;--warn:#D9A650;}
+:root[data-theme="light"]{--bg:#FAF8F5;--surface:#FFFFFF;--surface2:#F4F1EC;--ink:#1E2422;--muted:#7A827E;--line:#E6E2DB;--accent:#12907E;--accent-soft:#E0F0ED;--accent-ink:#0C6355;--good:#2E9E5B;--bad:#C0392B;--warn:#B57A1E;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+header{padding:30px 0 8px}
+h1{font-size:26px;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13.5px;margin:0}
+.focus{margin:18px 0 8px}
+.focus label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px}
+.focus input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:16px;padding:12px 14px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0 22px;display:flex;align-items:center;gap:14px}
+.prog .ring{--v:0;width:52px;height:52px;border-radius:50%;flex:0 0 auto;background:conic-gradient(var(--accent) calc(var(--v)*1%),var(--surface2) 0);display:grid;place-items:center}
+.prog .ring b{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:12px;font-family:var(--mono);font-weight:700}
+.prog .txt b{font-size:16px}.prog .txt div{color:var(--muted);font-size:13px}
+h2{font-size:15px;margin:24px 0 8px;display:flex;align-items:center;gap:8px}
+h2 .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);padding:2px 8px;border-radius:999px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:none}
+.item input[type=checkbox]{width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);flex:0 0 auto;cursor:pointer}
+.item .t{flex:1;font-size:15px}
+.item.done .t{text-decoration:line-through;color:var(--muted)}
+.item .del{opacity:0;border:none;background:none;color:var(--bad);cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+.item:hover .del{opacity:.7}
+.add{display:flex;gap:8px;padding:10px 14px;background:var(--surface2)}
+.add input{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--sans);font-size:14px;padding:8px 10px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:14px;padding:8px 14px;cursor:pointer;font-family:var(--sans);white-space:nowrap}
+:root[data-theme="dark"] .btn{color:#0E1513}@media(prefers-color-scheme:dark){.btn{color:#0E1513}}:root[data-theme="light"] .btn{color:#fff}
+.btn.ghost{background:transparent;color:var(--accent-ink);border:1px solid var(--accent)}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.exp{padding:12px 14px;border-bottom:1px solid var(--line)}
+.exp:last-child{border-bottom:none}
+.exp .top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.exp .nm{font-weight:600;font-size:15px}
+.exp .nt{color:var(--muted);font-size:13px;margin-top:3px}
+.pill{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;cursor:pointer;border:none;font-family:var(--sans)}
+.pill.run{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.win{background:rgba(46,158,91,.15);color:var(--good)}
+.pill.loss{background:rgba(192,57,43,.14);color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>div{flex:1;min-width:90px}
+.f{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px}
+.mini{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--mono);font-size:14px;padding:8px;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th{text-align:right;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:6px 8px;border-bottom:1px solid var(--line)}
+th:first-child{text-align:left}
+td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono)}
+td:first-child{text-align:left;font-family:var(--sans)}
+tr:last-child td{border-bottom:none}
+.del2{border:none;background:none;color:var(--bad);cursor:pointer}
+.tools{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
+.small{color:var(--muted);font-size:12.5px}
+.empty{color:var(--muted);font-size:14px;font-style:italic;padding:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>✅ Kami Growth Takip</h1>
+  <p class="sub">Sade sistem: yaptıkça işaretle. Detay/dokümanlar Growth OS'ta; burası günlük ekranın.</p>
+</header>
+
+<div class="focus">
+  <label>🎯 Bu haftanın odağı</label>
+  <input type="text" id="focus" placeholder="Tek cümle: bu hafta neye odaklanıyorum?">
+</div>
+
+<div class="prog">
+  <div class="ring" id="ring"><b id="ringtxt">0%</b></div>
+  <div class="txt"><b id="progtxt">0 / 0 tamamlandı</b><div>Küçük adımlar, üst üste binen ilerleme.</div></div>
+</div>
+
+<div id="lists"></div>
+
+<h2>🧪 Deneyler <span class="tag">test</span></h2>
+<div class="card" id="exp-card">
+  <div id="exp-list"></div>
+  <div class="add">
+    <input type="text" id="exp-name" placeholder="Deney (ör. ücretsiz bölüm 10→12)">
+    <button class="btn sm" id="exp-add">Ekle</button>
+  </div>
+</div>
+
+<h2>📊 Haftalık sayılar <span class="tag">isteğe bağlı</span></h2>
+<div class="card" style="padding:14px">
+  <div class="row">
+    <div><label class="f">Hafta</label><input type="date" id="w-date" class="mini" style="text-align:left;font-family:var(--sans)"></div>
+    <div><label class="f">Harcama ₺</label><input type="number" id="w-spend" class="mini"></div>
+    <div><label class="f">Install</label><input type="number" id="w-inst" class="mini"></div>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <div><label class="f">Gelir ₺</label><input type="number" id="w-rev" class="mini"></div>
+    <div><label class="f">Yeni abone</label><input type="number" id="w-sub" class="mini"></div>
+    <div><label class="f">D7 %</label><input type="number" id="w-d7" class="mini" step="0.1"></div>
+  </div>
+  <button class="btn sm" id="w-save" style="margin-top:10px">Haftayı kaydet</button>
+  <table id="w-table" style="display:none"><thead><tr><th>Hafta</th><th>Harcama</th><th>Install</th><th>Gelir</th><th>Abone</th><th>D7</th><th></th></tr></thead><tbody id="w-body"></tbody></table>
+</div>
+
+<div class="tools">
+  <button class="btn ghost sm" id="backup">Yedek indir (JSON)</button>
+  <button class="btn ghost sm" id="restore">Yedekten yükle</button>
+  <input type="file" id="file" accept=".json" style="display:none">
+  <span class="small" id="saved" style="align-self:center"></span>
+</div>
+<p class="small" style="margin-top:14px">Veriler bu tarayıcıda saklanır. Ara sıra yedek indir. Growth OS (detaylı): <a href="index.html" style="color:var(--accent-ink)">index</a></p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var KEY="kami-growth-takip-v1";
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function uid(){return (db._n=(db._n||0)+1)+"_"+Date.now()}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+var db=load();
+
+var SEED=[
+ {id:"g-temel",title:"Temel — önce bunlar",note:"ölçüm zemini",items:[
+   "Branch attribution'ı doğrula (Abdul ile test satın alma)",
+   "Event'leri kur: chapter_read, paywall_view, token_spend, ai_chat (Abdul)",
+   "Tek doğruluk kaynağı: gelir = Adapty (GA4'ü gelir için kullanma)",
+   "Baseline sayılarını çıkar (funnel + gelir)"]},
+ {id:"g-urun",title:"Ürün deneyleri — dönüşüm",note:"senin kontrolünde",items:[
+   "Ücretsiz bölüm testi 10→12, D1→D2'ye bak",
+   "Kapak A/B: 1 hikaye, 2 kapak",
+   "Ana sayfa: 'Kaldığın yerden devam et'i öne çıkar",
+   "AI chat açılış prompt testi (daha uzun sohbet)"]},
+ {id:"g-rutin",title:"Rutin — alışkanlık",note:"düzenli",items:[
+   "Günlük 15 dk nabız: harcama / install / gelir / anomali",
+   "Pazartesi: haftalık rapor + kokpit doldur",
+   "Haftalık trend raporu (TikTok Creative Center)"]},
+ {id:"g-benim",title:"Kendi görevlerim",note:"",items:[]}
+];
+if(!db.groups){
+  db.groups=SEED.map(function(g){return {id:g.id,title:g.title,note:g.note,
+    items:g.items.map(function(t){return {id:uid(),t:t,done:false}})};});
+  save();
+}
+db.exps=db.exps||[]; db.weeks=db.weeks||[];
+
+// focus
+var f=document.getElementById("focus");
+f.value=db.focus||"";
+f.addEventListener("input",function(){db.focus=f.value;save()});
+
+// ---- lists
+function progress(){
+  var all=0,done=0;
+  db.groups.forEach(function(g){g.items.forEach(function(it){all++;if(it.done)done++})});
+  var pct=all?Math.round(100*done/all):0;
+  document.getElementById("progtxt").textContent=done+" / "+all+" tamamlandı";
+  var r=document.getElementById("ring"); r.style.setProperty("--v",pct);
+  document.getElementById("ringtxt").textContent=pct+"%";
+}
+function renderLists(){
+  var host=document.getElementById("lists"); host.innerHTML="";
+  db.groups.forEach(function(g){
+    var h=document.createElement("h2");
+    h.innerHTML=esc(g.title)+(g.note?' <span class="tag">'+esc(g.note)+'</span>':"");
+    host.appendChild(h);
+    var card=document.createElement("div"); card.className="card";
+    if(!g.items.length){card.innerHTML='<div class="empty">Boş — aşağıdan ekle.</div>';}
+    g.items.forEach(function(it){
+      var d=document.createElement("div"); d.className="item"+(it.done?" done":"");
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=it.done;
+      cb.addEventListener("change",function(){it.done=cb.checked;save();d.classList.toggle("done",cb.checked);progress()});
+      var sp=document.createElement("div"); sp.className="t"; sp.textContent=it.t;
+      var del=document.createElement("button"); del.className="del"; del.innerHTML="&times;"; del.title="Sil";
+      del.addEventListener("click",function(){if(confirm("Silinsin mi?")){g.items=g.items.filter(function(x){return x!==it});save();renderLists();progress()}});
+      d.appendChild(cb); d.appendChild(sp); d.appendChild(del);
+      card.appendChild(d);
+    });
+    var add=document.createElement("div"); add.className="add";
+    var inp=document.createElement("input"); inp.type="text"; inp.placeholder="Yeni madde ekle…";
+    var btn=document.createElement("button"); btn.className="btn sm"; btn.textContent="Ekle";
+    function addItem(){var v=inp.value.trim();if(!v)return;g.items.push({id:uid(),t:v,done:false});inp.value="";save();renderLists();progress()}
+    btn.addEventListener("click",addItem);
+    inp.addEventListener("keydown",function(e){if(e.key==="Enter")addItem()});
+    add.appendChild(inp); add.appendChild(btn);
+    card.appendChild(add);
+    host.appendChild(card);
+  });
+  progress();
+}
+
+// ---- experiments
+var EXST={run:["Deniyorum","run"],win:["Kazandı","win"],loss:["Kaybetti","loss"]};
+function renderExps(){
+  var el=document.getElementById("exp-list"); el.innerHTML="";
+  if(!db.exps.length){el.innerHTML='<div class="empty">Henüz deney yok.</div>';return}
+  db.exps.forEach(function(x,i){
+    var s=EXST[x.st]||EXST.run;
+    var d=document.createElement("div"); d.className="exp";
+    d.innerHTML='<div class="top"><span class="nm">'+esc(x.nm)+'</span>'+
+      '<span><button class="pill '+s[1]+'" data-cy="'+i+'">'+s[0]+'</button> '+
+      '<button class="del2" data-del="'+i+'">&times;</button></span></div>'+
+      (x.nt?'<div class="nt">'+esc(x.nt)+'</div>':'');
+    el.appendChild(d);
+  });
+}
+document.getElementById("exp-add").addEventListener("click",function(){
+  var nm=document.getElementById("exp-name").value.trim(); if(!nm)return;
+  db.exps.unshift({nm:nm,st:"run",nt:""}); document.getElementById("exp-name").value=""; save(); renderExps();
+});
+document.getElementById("exp-name").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("exp-add").click()});
+document.getElementById("exp-list").addEventListener("click",function(e){
+  var cy=e.target.closest("[data-cy]"), del=e.target.closest("[data-del]");
+  if(del){if(confirm("Deney silinsin mi?")){db.exps.splice(+del.dataset.del,1);save();renderExps()}return}
+  if(cy){var o=["run","win","loss"];var x=db.exps[+cy.dataset.cy];x.st=o[(o.indexOf(x.st)+1)%o.length];save();renderExps()}
+});
+
+// ---- weeks
+function money(n){return isFinite(n)?n.toLocaleString("tr-TR")+" ₺":"—"}
+function renderWeeks(){
+  var b=document.getElementById("w-body"),tb=document.getElementById("w-table"); b.innerHTML="";
+  if(!db.weeks.length){tb.style.display="none";return}
+  tb.style.display="";
+  db.weeks.forEach(function(w,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+esc(w.date)+"</td><td>"+money(w.spend)+"</td><td>"+(w.inst||0)+"</td><td>"+money(w.rev)+"</td><td>"+(w.sub||0)+"</td><td>"+(w.d7||0)+"%</td>"+
+      '<td><button class="del2" data-w="'+i+'">&times;</button></td>';
+    b.appendChild(tr);
+  });
+}
+document.getElementById("w-save").addEventListener("click",function(){
+  var d=document.getElementById("w-date").value; if(!d){alert("Tarih seç");return}
+  var o={date:d,spend:+document.getElementById("w-spend").value||0,inst:+document.getElementById("w-inst").value||0,
+    rev:+document.getElementById("w-rev").value||0,sub:+document.getElementById("w-sub").value||0,d7:+document.getElementById("w-d7").value||0};
+  var i=db.weeks.findIndex(function(x){return x.date===d}); if(i>=0)db.weeks[i]=o; else db.weeks.push(o);
+  db.weeks.sort(function(a,b){return a.date<b.date?1:-1}); save(); renderWeeks();
+  ["w-spend","w-inst","w-rev","w-sub","w-d7"].forEach(function(id){document.getElementById(id).value=""});
+  flash("Kaydedildi ✓");
+});
+document.getElementById("w-body").addEventListener("click",function(e){
+  var b=e.target.closest("[data-w]"); if(!b)return;
+  db.weeks.splice(+b.dataset.w,1); save(); renderWeeks();
+});
+
+// ---- backup
+function flash(m){var s=document.getElementById("saved");s.textContent=m;setTimeout(function(){s.textContent=""},1800)}
+document.getElementById("backup").addEventListener("click",function(){
+  var blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="kami-growth-takip-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);flash("İndirildi ✓");
+});
+document.getElementById("restore").addEventListener("click",function(){document.getElementById("file").click()});
+document.getElementById("file").addEventListener("change",function(e){
+  var fl=e.target.files[0]; if(!fl)return; var r=new FileReader();
+  r.onload=function(){try{var d=JSON.parse(r.result);if(!confirm("Mevcut veriler değişecek. Devam?"))return;db=d;save();location.reload()}catch(err){alert("Geçersiz yedek")}};
+  r.readAsText(fl);
+});
+
+renderLists(); renderExps(); renderWeeks();
+})();
+</script>
+</body>
+</html>
