@@ -64,6 +64,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .cmt:last-child{border-bottom:none}
 .cmt .by{font-weight:700;color:var(--accent-ink)}
 .cmt .at{color:var(--muted);font-size:11px}
+.cmt.sys{color:var(--muted);font-style:italic;font-size:12px}
 .cmtadd{display:flex;gap:8px;margin-top:8px}
 .cmtadd input{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--sans);font-size:13px;padding:7px 9px}
 .empty{color:var(--muted);font-style:italic;padding:20px;text-align:center}
@@ -122,8 +123,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 var SUPA_URL="https://epqtdonorpyfqtqzzyos.supabase.co";
 var SUPA_KEY="sb_publishable_LcIaK40Sh5SRMEw8S7HrlA_fgC7hpqD";
 var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-var me=null, meName="", tasks=[], section="product", timers={};
+var me=null, meName="", tasks=[], section="product", timers={}, lastWrite=0, rtTimer=null;
 var OWNERS=["","Tuğçe","Berke","Yağmur","Abdul"];
+function isEditing(){var a=document.activeElement;return !!(a&&a.closest&&a.closest("#list"));}
+function softRefresh(){if(rtTimer)clearTimeout(rtTimer);rtTimer=setTimeout(function(){if(isEditing()){softRefresh();return;}loadBoard(false);},1500);}
 
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
 var NAMES={"tugce@cizgi.studio":"Tuğçe","ahmetberke@cizgi.studio":"Berke","yagmur@cizgi.studio":"Yağmur"};
@@ -152,8 +155,8 @@ function onAuthed(user){
   gate.classList.add("hidden"); app.classList.remove("hidden");
   document.getElementById("uname").textContent=meName;
   loadBoard(true);
-  try{ sb.channel("board").on("postgres_changes",{event:"*",schema:"public",table:"board_tasks"},function(){loadBoard(false);}).subscribe(); }catch(e){}
-  window.addEventListener("focus",function(){loadBoard(false);});
+  try{ sb.channel("board").on("postgres_changes",{event:"*",schema:"public",table:"board_tasks"},function(){ if(Date.now()-lastWrite<3000)return; softRefresh(); }).subscribe(); }catch(e){}
+  window.addEventListener("focus",function(){ if(!isEditing())loadBoard(false); });
 }
 
 // ---- tabs
@@ -198,7 +201,7 @@ function seed(){
   sb.from("board_tasks").insert(rows).then(function(){loadBoard(false);});
 }
 function patch(id,obj){
-  setSync("kaydediliyor…");
+  lastWrite=Date.now(); setSync("kaydediliyor…");
   sb.from("board_tasks").update(obj).eq("id",id).then(function(r){setSync(r.error?("hata: "+r.error.message):"kaydedildi");});
 }
 function debouncedPatch(id,field,val){
@@ -213,7 +216,7 @@ function addTask(){
   var el=document.getElementById("newtask"); var v=el.value.trim(); if(!v)return;
   el.value="";
   var row={section:section,title:v,owner:"",status:"",done:false,comments:[],created_by:meName,sort:Date.now()};
-  setSync("ekleniyor…");
+  lastWrite=Date.now(); setSync("ekleniyor…");
   sb.from("board_tasks").insert(row).select().then(function(r){
     if(r.error){setSync("hata: "+r.error.message);return}
     if(r.data&&r.data[0])tasks.push(r.data[0]); render(); setSync("eklendi");
@@ -221,6 +224,7 @@ function addTask(){
 }
 function delTask(t){
   if(!confirm("Bu iş silinsin mi? (herkes için)"))return;
+  lastWrite=Date.now();
   sb.from("board_tasks").delete().eq("id",t.id).then(function(){tasks=tasks.filter(function(x){return x.id!==t.id});render();});
 }
 function addComment(t,text){
@@ -239,14 +243,14 @@ function render(){
     // ust satir
     var trow=document.createElement("div"); trow.className="trow";
     var cb=document.createElement("input"); cb.type="checkbox"; cb.className="cbx"; cb.checked=!!t.done;
-    cb.onchange=function(){t.done=cb.checked;card.classList.toggle("done",cb.checked);patch(t.id,{done:cb.checked});};
+    cb.onchange=function(){t.done=cb.checked;var c=(t.comments||[]).slice();c.push({by:meName,text:cb.checked?"Tamamlandı":"Yeniden açıldı",at:new Date().toISOString(),sys:true});t.comments=c;patch(t.id,{done:cb.checked,comments:c});render();};
     var main=document.createElement("div"); main.className="tmain";
     var title=document.createElement("div"); title.className="ttitle"; title.textContent=t.title;
     var meta=document.createElement("div"); meta.className="meta";
     // owner
     var own=document.createElement("select"); own.className="owner";
     OWNERS.forEach(function(o){var op=document.createElement("option");op.value=o;op.textContent=o?("Kimde: "+o):"Kimde: —";own.appendChild(op);});
-    own.value=t.owner||""; own.onchange=function(){t.owner=own.value;patch(t.id,{owner:own.value});};
+    own.value=t.owner||""; own.onchange=function(){t.owner=own.value;var c=(t.comments||[]).slice();c.push({by:meName,text:"Devredildi → "+(own.value||"—"),at:new Date().toISOString(),sys:true});t.comments=c;patch(t.id,{owner:own.value,comments:c});render();};
     // status
     var st=document.createElement("input"); st.type="text"; st.placeholder="şu an ne durumda?"; st.value=t.status||"";
     st.oninput=function(){t.status=st.value;debouncedPatch(t.id,"status",st.value);};
@@ -265,8 +269,9 @@ function render(){
     var box=document.createElement("div"); box.className="cmts hidden";
     tog.onclick=function(){box.classList.toggle("hidden");};
     (t.comments||[]).forEach(function(c){
-      var d=document.createElement("div"); d.className="cmt";
-      d.innerHTML='<span class="by">'+esc(c.by)+'</span> <span class="at">'+esc(fmtDate(c.at))+'</span><br>'+esc(c.text);
+      var d=document.createElement("div"); d.className="cmt"+(c.sys?" sys":"");
+      if(c.sys){ d.innerHTML=esc(c.text)+' <span class="at">— '+esc(c.by)+", "+esc(fmtDate(c.at))+'</span>'; }
+      else { d.innerHTML='<span class="by">'+esc(c.by)+'</span> <span class="at">'+esc(fmtDate(c.at))+'</span><br>'+esc(c.text); }
       box.appendChild(d);
     });
     var add=document.createElement("div"); add.className="cmtadd";
