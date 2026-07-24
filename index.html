@@ -126,7 +126,8 @@ var me=null, meName="", tasks=[], section="product", timers={};
 var OWNERS=["","Tuğçe","Berke","Yağmur","Abdul"];
 
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
-function nameFromEmail(e){return (e||"").split("@")[0];}
+var NAMES={"tugce@cizgi.studio":"Tuğçe","ahmetberke@cizgi.studio":"Berke","yagmur@cizgi.studio":"Yağmur"};
+function nameFromEmail(e){e=(e||"").toLowerCase().trim();return NAMES[e]||(e.split("@")[0]||"kullanıcı");}
 function fmtDate(iso){if(!iso)return "";var d=new Date(iso);return d.toLocaleDateString("tr-TR",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});}
 function setSync(t){document.getElementById("sync").textContent=t;}
 
