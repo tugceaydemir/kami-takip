@@ -65,6 +65,9 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-
 .cmt .by{font-weight:700;color:var(--accent-ink)}
 .cmt .at{color:var(--muted);font-size:11px}
 .cmt.sys{color:var(--muted);font-style:italic;font-size:12px}
+.cmt{position:relative;padding-right:20px}
+.cmtdel{position:absolute;right:0;top:6px;border:none;background:none;color:var(--bad);cursor:pointer;font-size:15px;line-height:1;opacity:0}
+.cmt:hover .cmtdel{opacity:.6}
 .cmtadd{display:flex;gap:8px;margin-top:8px}
 .cmtadd input{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:var(--sans);font-size:13px;padding:7px 9px}
 .empty{color:var(--muted);font-style:italic;padding:20px;text-align:center}
@@ -243,7 +246,7 @@ function render(){
     // ust satir
     var trow=document.createElement("div"); trow.className="trow";
     var cb=document.createElement("input"); cb.type="checkbox"; cb.className="cbx"; cb.checked=!!t.done;
-    cb.onchange=function(){t.done=cb.checked;var c=(t.comments||[]).slice();c.push({by:meName,text:cb.checked?"Tamamlandı":"Yeniden açıldı",at:new Date().toISOString(),sys:true});t.comments=c;patch(t.id,{done:cb.checked,comments:c});render();};
+    cb.onchange=function(){t.done=cb.checked;card.classList.toggle("done",cb.checked);patch(t.id,{done:cb.checked});};
     var main=document.createElement("div"); main.className="tmain";
     var title=document.createElement("div"); title.className="ttitle"; title.textContent=t.title;
     var meta=document.createElement("div"); meta.className="meta";
@@ -268,10 +271,13 @@ function render(){
     var tog=document.createElement("button"); tog.className="cmttoggle"; tog.textContent="Notlar / yorumlar ("+n+")";
     var box=document.createElement("div"); box.className="cmts hidden";
     tog.onclick=function(){box.classList.toggle("hidden");};
-    (t.comments||[]).forEach(function(c){
+    (t.comments||[]).forEach(function(c,ci){
       var d=document.createElement("div"); d.className="cmt"+(c.sys?" sys":"");
       if(c.sys){ d.innerHTML=esc(c.text)+' <span class="at">— '+esc(c.by)+", "+esc(fmtDate(c.at))+'</span>'; }
       else { d.innerHTML='<span class="by">'+esc(c.by)+'</span> <span class="at">'+esc(fmtDate(c.at))+'</span><br>'+esc(c.text); }
+      var x=document.createElement("button"); x.className="cmtdel"; x.innerHTML="&times;"; x.title="Notu sil";
+      x.onclick=function(){if(!confirm("Not silinsin mi?"))return;var arr=(t.comments||[]).slice();arr.splice(ci,1);t.comments=arr;patch(t.id,{comments:arr});render();};
+      d.appendChild(x);
       box.appendChild(d);
     });
     var add=document.createElement("div"); add.className="cmtadd";
