@@ -165,7 +165,7 @@ function onAuthed(user){
   me=user; meName=nameFromEmail(user.email);
   gate.classList.add("hidden"); app.classList.remove("hidden");
   document.getElementById("uname").textContent=meName;
-  loadBoard(true);
+  loadBoard(false);
   try{ sb.channel("board").on("postgres_changes",{event:"*",schema:"public",table:"board_tasks"},function(){ if(Date.now()-lastWrite<3000)return; softRefresh(); }).subscribe(); }catch(e){}
   window.addEventListener("focus",function(){ if(!isEditing())loadBoard(false); });
 }
@@ -183,7 +183,7 @@ var HINT={product:"Ürün işleri — onboarding, paywall, kapak, ana sayfa, AI 
 // ---- data
 function loadBoard(seedIfEmpty){
   setSync("yükleniyor…");
-  sb.from("board_tasks").select("*").order("sort",{ascending:true}).then(function(r){
+  sb.from("board_tasks").select("*").order("sort",{ascending:false}).then(function(r){
     if(r.error){setSync("hata: "+r.error.message);return}
     tasks=r.data||[];
     setSync("güncel");
@@ -230,7 +230,7 @@ function addTask(){
   lastWrite=Date.now(); setSync("ekleniyor…");
   sb.from("board_tasks").insert(row).select().then(function(r){
     if(r.error){setSync("hata: "+r.error.message);return}
-    if(r.data&&r.data[0])tasks.push(r.data[0]); render(); setSync("eklendi");
+    if(r.data&&r.data[0])tasks.unshift(r.data[0]); render(); setSync("eklendi");
   });
 }
 function delTask(t){
